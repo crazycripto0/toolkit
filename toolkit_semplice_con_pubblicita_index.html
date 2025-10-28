@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Toolkit gratuito: calcolatori veloci (interessi composti, prestito, percentuali, IVA), convertitori e utilità (giorni tra date, countdown, BMI)." />
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta property="og:title" content="ToolKit – Calcolatori & Convertitori" />
+  <meta property="og:description" content="Strumenti gratuiti, veloci e responsive. Niente registrazione." />
+  <meta property="og:type" content="website" />
+  <title>ToolKit – Calcolatori & Convertitori</title>
+
+  <!-- Font & Tailwind CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { color-scheme: light dark; }
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans"; }
+    .focus-ring { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.5); }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900 min-h-screen text-zinc-900 dark:text-zinc-100">
+  <header class="max-w-6xl mx-auto px-4 pt-8 pb-4 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-3" aria-label="Home">
+      <div class="w-10 h-10 rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 grid place-items-center font-black">T</div>
+      <div>
+        <h1 class="text-2xl font-bold">ToolKit – gratis</h1>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400">Calcolatori e convertitori veloci</p>
+      </div>
+    </a>
+    <div class="flex items-center gap-2">
+      <button id="shareBtn" class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" aria-label="Condividi">Condividi</button>
+      <button id="themeToggle" class="inline-flex items-center justify-center rounded-xl px-3 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" aria-label="Cambia tema">🌗</button>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pb-24" id="top">
+    <!-- Ad Slot Top -->
+    <div class="flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 h-28 mb-6" id="adTop" aria-label="Spazio pubblicità">Spazio pubblicità (AdSense)</div>
+
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Interessi composti -->
+      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="compounding">
+        <h2 class="text-lg font-bold mb-3">Interessi composti</h2>
+        <div class="space-y-3">
+          <div>
+            <label for="ic_principal" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Capitale iniziale (€)</label>
+            <input id="ic_principal" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="1000" min="0" step="0.01" />
+          </div>
+          <div>
+            <label for="ic_monthly" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Contributo mensile (€)</label>
+            <input id="ic_monthly" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="50" min="0" step="0.01" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="ic_rate" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Tasso annuo (%)</label>
+              <input id="ic_rate" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="6" step="0.01" />
+            </div>
+            <div>
+              <label for="ic_years" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Anni</label>
+              <input id="ic_years" type="number" inputmode="numeric" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="5" min="1" />
+            </div>
+          </div>
+          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="compound">Calcola</button>
+          <div class="mt-3 text-sm" id="ic_out" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Prestito / rata mensile -->
+      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="loan">
+        <h2 class="text-lg font-bold mb-3">Prestito – rata mensile</h2>
+        <div class="space-y-3">
+          <div>
+            <label for="l_amount" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Importo (€)</label>
+            <input id="l_amount" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="10000" min="0" step="0.01" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="l_rate" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Tasso annuo (%)</label>
+              <input id="l_rate" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="7" step="0.01" />
+            </div>
+            <div>
+              <label for="l_years" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Durata (anni)</label>
+              <input id="l_years" type="number" inputmode="numeric" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="3" min="1" />
+            </div>
+          </div>
+          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="loan">Calcola</button>
+          <div class="mt-3 text-sm" id="l_out" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Percentuali -->
+      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="percent">
+        <h2 class="text-lg font-bold mb-3">Percentuali veloci</h2>
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3 items-end">
+            <div>
+              <label for="p_x" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">X%</label>
+              <input id="p_x" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="15" step="0.01" />
+            </div>
+            <div>
+              <label for="p_y" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">di Y</label>
+              <input id="p_y" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="200" step="0.01" />
+            </div>
+          </div>
+          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="percent-of">Calcola X% di Y</button>
+          <div id="p_of_out" class="text-sm" aria-live="polite"></div>
+          <hr class="border-zinc-200 dark:border-zinc-800" />
+          <div class="grid grid-cols-3 gap-3 items-end">
+            <div>
+              <label for="p_a" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Valore</label>
+              <input id="p_a" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="120" step="0.01" />
+            </div>
+            <div>
+              <label for="p_b" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">± %</label>
+              <input id="p_b" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="20" step="0.01" />
+            </div>
+            <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" data-action="percent-apply">Applica</button>
+          </div>
+          <div id="p_inc_out" class="text-sm" aria-live="polite"></div>
+          <hr class="border-zinc-200 dark:border-zinc-800" />
+          <div class="grid grid-cols-2 gap-3 items-end">
+            <div>
+              <label for="p_from" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Da</label>
+              <input id="p_from" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="100" step="0.01" />
+            </div>
+            <div>
+              <label for="p_to" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">a</label>
+              <input id="p_to" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="125" step="0.01" />
+            </div>
+          </div>
+          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="percent-diff">Differenza %</button>
+          <div id="p_diff_out" class="text-sm" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Convertitore unità -->
+      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="converter">
+        <h2 class="text-lg font-bold mb-3">Convertitore unità</h2>
+        <div class="space-y-3">
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label for="u_cat" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Categoria</label>
+              <select id="u_cat" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2">
+                <option value="length">Lunghezza</option>
+                <option value="mass">Peso</option>
+                <option value="temp">Temperatura</option>
+                <option value="volume">Volume</option>
+              </select>
+            </div>
+            <div>
+              <label for="u_from" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Da</label>
+              <select id="u_from" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2"></select>
+            </div>
+            <div>
+              <label for="u_to" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">A</label>
+              <select id="u_to" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2"></select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="u_val" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Valore</label>
+              <input id="u_val" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="1" step="0.0001" />
+            </div>
+            <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" data-action="convert">Converti</button>
+          </div>
+          <div id="u_out" class="text-sm" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Giorni tra date -->
+      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="days">
+        <h2 class="text-lg font-bold mb-3">Giorni tra due date</h2>
+        <div class="space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="d1" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Data 1</label>
+              <input id="d1" type="date" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" />
+            </div>
+            <div>
+              <label for="d2" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Data 2</label>
+              <input id="d2" type="date" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" />
+            </div>
+          </div>
+          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="days">Calcola</button>
+          <div id="d_out" class="text-sm" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Countdown semplice -->
+      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="countdown">
+        <h2 class="text-lg font-bold mb-3">Countdown</h2>
+        <div class="space-y-3">
+          <div class="grid grid-cols-3 gap-3">
+            <div class="col-span-2">
+              <label for="cd_target" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Data/ora obiettivo</label>
+              <input id="cd_target" type="datetime-local" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" />
+            </div>
+            <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" data-action="countdown">Avvia</button>
+          </div>
+          <div id="cd_out" class="text-2xl font-bold mt-2 tracking-wider" aria-live="polite">—</div>
+        </div>
+      </div>
+
+      <!-- IVA (Italia) -->
+      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="iva">
+        <h2 class="text-lg font-bold mb-3">Calcolatore IVA (IT)</h2>
+        <div class="space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="iva_base" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Imponibile (€)</label>
+              <input id="iva_base" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="100" step="0.01" />
+            </div>
+            <div>
+              <label for="iva_rate" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Aliquota (%)</label>
+              <input id="iva_rate" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="22" step="0.01" />
+            </div>
+          </div>
+          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="iva">Calcola</button>
+          <div id="iva_out" class="text-sm" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- BMI -->
+      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="bmi">
+        <h2 class="text-lg font-bold mb-3">BMI – Indice di massa corporea</h2>
+        <div class="space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="bmi_h" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Altezza (cm)</label>
+              <input id="bmi_h" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="175" step="0.1" />
+            </div>
+            <div>
+              <label for="bmi_w" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Peso (kg)</label>
+              <input id="bmi_w" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="70" step="0.1" />
+            </div>
+          </div>
+          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="bmi">Calcola</button>
+          <div id="bmi_out" class="text-sm" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad Slot Bottom -->
+    <div class="flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 h-28 mt-8" id="adBottom" aria-label="Spazio pubblicità">Spazio pubblicità (AdSense)</div>
+
+    <footer class="text-center text-sm text-zinc-500 dark:text-zinc-400 mt-8">
+      <p>© <span id="year"></span> ToolKit – fatto con ♥️. · <a href="#privacy" class="underline">Privacy</a></p>
+    </footer>
+  </main>
+
+  <noscript>
+    <div class="max-w-3xl mx-auto p-4 text-red-600">Questo sito richiede JavaScript per funzionare correttamente.</div>
+  </noscript>
+
+  <script defer>
+    // ---------- Utils ----------
+    const fmtEUR = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' });
+    const qs = (s, el=document) => el.querySelector(s);
+    const qsa = (s, el=document) => [...el.querySelectorAll(s)];
+    const save = (k,v)=>localStorage.setItem(k, JSON.stringify(v));
+    const load = (k,d=null)=>{ try { const v = localStorage.getItem(k); return v? JSON.parse(v): d; } catch { return d; } };
+
+    // Theme toggle + persist
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('prefers-dark', document.documentElement.classList.contains('dark') ? '1' : '0');
+    });
+    if (load('prefers-dark') === '1' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    // Share button
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const url = location.href;
+      const data = { title: 'ToolKit – Calcolatori & Convertitori', text: 'Strumenti gratuiti e veloci', url };
+      try { if (navigator.share) { await navigator.share(data); } else { await navigator.clipboard.writeText(url); alert('Link copiato!'); } } catch {}
+    });
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Prefill dates
+    const todayISO = new Date().toISOString().split('T')[0];
+    qs('#d1').value = todayISO; qs('#d2').value = todayISO;
+    qs('#cd_target').value = new Date(Date.now() + 3600*1000).toISOString().slice(0,16);
+
+    // ---------- Interessi composti ----------
+    function calcCompound(){
+      const P = parseFloat(qs('#ic_principal').value) || 0;
+      const contrib = parseFloat(qs('#ic_monthly').value) || 0;
+      const r = (parseFloat(qs('#ic_rate').value) || 0) / 100 / 12; // mensile
+      const years = parseInt(qs('#ic_years').value) || 0;
+      const n = years * 12;
+      const futureP = P * Math.pow(1 + r, n);
+      const futureAnnuity = r === 0 ? contrib * n : contrib * (Math.pow(1 + r, n) - 1) / r;
+      const totale = futureP + futureAnnuity;
+      const investito = P + contrib * n;
+      const interessi = totale - investito;
+      qs('#ic_out').innerHTML = `
+        <div><strong>Valore finale:</strong> ${fmtEUR.format(totale)}</div>
+        <div>Di cui interessi: <strong>${fmtEUR.format(interessi)}</strong></div>
+        <div>Capitale investito: ${fmtEUR.format(investito)}</div>
+      `;
+    }
+
+    // ---------- Prestito / rata mensile ----------
+    function calcLoan(){
+      const A = parseFloat(qs('#l_amount').value) || 0;
+      const annual = (parseFloat(qs('#l_rate').value) || 0) / 100;
+      const years = parseInt(qs('#l_years').value) || 0;
+      const i = annual / 12; const n = years * 12;
+      let rata = 0;
+      if (n === 0) { qs('#l_out').textContent = 'Durata non valida'; return; }
+      rata = (i === 0) ? (A / n) : A * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+      const totale = rata * n; const interessi = totale - A;
+      qs('#l_out').innerHTML = `
+        <div><strong>Rata mensile:</strong> ${fmtEUR.format(rata)}</div>
+        <div>Interessi totali: ${fmtEUR.format(interessi)}</div>
+        <div>Rimborso complessivo: ${fmtEUR.format(totale)}</div>
+      `;
+    }
+
+    // ---------- Percentuali ----------
+    function calcPercentOf(){
+      const x = parseFloat(qs('#p_x').value) || 0; const y = parseFloat(qs('#p_y').value) || 0;
+      const out = (x/100) * y; qs('#p_of_out').textContent = `${x}% di ${y} = ${out.toFixed(2)}`;
+    }
+    function calcIncrease(){
+      const a = parseFloat(qs('#p_a').value) || 0; const b = parseFloat(qs('#p_b').value) || 0;
+      const up = a * (1 + b/100); const down = a * (1 - b/100);
+      qs('#p_inc_out').textContent = `+${b}% = ${up.toFixed(2)}  |  -${b}% = ${down.toFixed(2)}`;
+    }
+    function calcDiff(){
+      const from = parseFloat(qs('#p_from').value) || 0; const to = parseFloat(qs('#p_to').value) || 0;
+      if (from === 0) { qs('#p_diff_out').textContent = 'Non definito (divisione per 0)'; return; }
+      const diff = ((to - from) / from) * 100; qs('#p_diff_out').textContent = `Variazione: ${diff.toFixed(2)}%`;
+    }
+
+    // ---------- Convertitore unità ----------
+    const units = {
+      length: { base: 'm', map: { m:1, km:1000, cm:0.01, mm:0.001, mi:1609.344, yd:0.9144, ft:0.3048, in:0.0254 } },
+      mass:   { base: 'kg', map: { kg:1, g:0.001, mg:0.000001, lb:0.45359237, oz:0.028349523125 } },
+      temp:   { base: 'C', map: { C:1, F:1, K:1 } },
+      volume: { base: 'l', map: { l:1, ml:0.001, m3:1000, gal:3.785411784, pt:0.473176473 } }
+    };
+    function populateUnits(){
+      const cat = qs('#u_cat').value; const from = qs('#u_from'); const to = qs('#u_to');
+      from.innerHTML = ''; to.innerHTML = '';
+      if (cat === 'temp') { ['C','F','K'].forEach(u => { from.add(new Option(u,u)); to.add(new Option(u,u)); }); }
+      else { Object.keys(units[cat].map).forEach(u => { from.add(new Option(u,u)); to.add(new Option(u,u)); }); }
+      // valori di default sensati
+      if (cat === 'length') { from.value='m'; to.value='km'; }
+      if (cat === 'mass')   { from.value='kg'; to.value='g'; }
+      if (cat === 'volume') { from.value='l'; to.value='ml'; }
+    }
+    function convert(){
+      const cat = qs('#u_cat').value; const from = qs('#u_from').value; const to = qs('#u_to').value; const val = parseFloat(qs('#u_val').value) || 0;
+      let result = 0;
+      if (cat === 'temp') {
+        let c; if (from === 'C') c = val; else if (from === 'F') c = (val - 32) * 5/9; else c = val - 273.15;
+        if (to === 'C') result = c; else if (to === 'F') result = c * 9/5 + 32; else result = c + 273.15;
+      } else if (cat === 'volume') {
+        const baseVal = val * units[cat].map[from]; result = baseVal / units[cat].map[to];
+      } else {
+        const baseVal = val * units[cat].map[from]; result = baseVal / units[cat].map[to];
+      }
+      qs('#u_out').textContent = `${val} ${from} = ${Number(result).toFixed(6)} ${to}`;
+    }
+    qs('#u_cat').addEventListener('change', populateUnits); populateUnits();
+
+    // ---------- Giorni tra date ----------
+    function diffDays(){
+      const d1 = new Date(qs('#d1').value); const d2 = new Date(qs('#d2').value);
+      if (isNaN(d1) || isNaN(d2)) { qs('#d_out').textContent = 'Seleziona entrambe le date'; return; }
+      const ms = Math.abs(d2 - d1); const days = Math.round(ms / (1000*60*60*24));
+      qs('#d_out').textContent = `${days} giorni`;
+    }
+
+    // ---------- Countdown ----------
+    let cdTimer = null; function startCountdown(){
+      const targetStr = qs('#cd_target').value; const target = new Date(targetStr);
+      if (isNaN(target)) { alert('Inserisci una data/ora valida'); return; }
+      if (cdTimer) clearInterval(cdTimer);
+      cdTimer = setInterval(() => {
+        const now = new Date(); let diff = target - now;
+        if (diff <= 0) { clearInterval(cdTimer); qs('#cd_out').textContent = 'Fatto!'; return; }
+        const d = Math.floor(diff / (1000*60*60*24)); diff -= d*1000*60*60*24;
+        const h = Math.floor(diff / (1000*60*60)); diff -= h*1000*60*60;
+        const m = Math.floor(diff / (1000*60)); diff -= m*1000*60;
+        const s = Math.floor(diff / 1000);
+        qs('#cd_out').textContent = `${d}g ${h}h ${m}m ${s}s`;
+      }, 1000);
+    }
+
+    // ---------- IVA ----------
+    function calcIVA(){
+      const base = parseFloat(qs('#iva_base').value) || 0; const rate = (parseFloat(qs('#iva_rate').value) || 0)/100;
+      const tax = base * rate; const total = base + tax;
+      const fromTotalBase = total / (1+rate); const fromTotalTax = total - fromTotalBase;
+      qs('#iva_out').innerHTML = `
+        <div>IVA: <strong>${fmtEUR.format(tax)}</strong></div>
+        <div>Totale (ivato): <strong>${fmtEUR.format(total)}</strong></div>
+        <div class="text-zinc-500">(da totale: imponibile ${fmtEUR.format(fromTotalBase)}, IVA ${fmtEUR.format(fromTotalTax)})</div>
+      `;
+    }
+
+    // ---------- BMI ----------
+    function calcBMI(){
+      const h = (parseFloat(qs('#bmi_h').value) || 0) / 100; const w = parseFloat(qs('#bmi_w').value) || 0;
+      if (h <= 0) { qs('#bmi_out').textContent = 'Altezza non valida'; return; }
+      const bmi = w / (h*h);
+      let cat = '—';
+      if (bmi < 18.5) cat = 'Sottopeso'; else if (bmi < 25) cat = 'Normopeso'; else if (bmi < 30) cat = 'Sovrappeso'; else cat = 'Obesità';
+      qs('#bmi_out').textContent = `BMI: ${bmi.toFixed(1)} – ${cat}`;
+    }
+
+    // Bind buttons (unico listener per performance)
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-action]'); if(!btn) return;
+      const a = btn.getAttribute('data-action');
+      ({'compound':calcCompound,'loan':calcLoan,'percent-of':calcPercentOf,'percent-apply':calcIncrease,'percent-diff':calcDiff,'convert':convert,'days':diffDays,'countdown':startCountdown,'iva':calcIVA,'bmi':calcBMI}[a] || (()=>{}))();
+    });
+
+    // Persist last used values
+    qsa('input, select').forEach(el=>{
+      const key = `tk-${el.id}`; const v = load(key);
+      if (v !== null && v !== undefined) el.value = v;
+      el.addEventListener('input', ()=> save(key, el.value));
+    });
+  </script>
+
+  <!-- AdSense (placeholder) -->
+  <!--
+  1) Incolla lo script UNA VOLTA nell'head o qui prima della chiusura body:
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=CA-PUB-XXXXXXXX" crossorigin="anonymous"></script>
+
+  2) Sostituisci uno dei box "Spazio pubblicità" con:
+  <ins class="adsbygoogle" style="display:block" data-ad-client="CA-PUB-XXXXXXXX" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  -->
+</body>
+</html>
