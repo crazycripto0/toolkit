@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Toolkit gratuito: calcolatori veloci (interessi composti, prestito, percentuali, IVA), convertitori e utilità (giorni tra date, countdown, BMI)." />
+  <meta name="description" content="Toolkit gratuito: calcolatori veloci e belli (interessi composti, prestito, percentuali, IVA, BMI), convertitori e utilità. Responsive, tema scuro, risultati copiabili." />
   <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta property="og:title" content="ToolKit – Calcolatori & Convertitori" />
-  <meta property="og:description" content="Strumenti gratuiti, veloci e responsive. Niente registrazione." />
-  <meta property="og:type" content="website" />
+  <meta property="og:description" content="Strumenti gratuiti, veloci e curati. Niente registrazione." />
   <title>ToolKit – Calcolatori & Convertitori</title>
 
   <!-- Font & Tailwind CDN -->
@@ -20,253 +19,350 @@
     :root { color-scheme: light dark; }
     html { scroll-behavior: smooth; }
     body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans"; }
-    .focus-ring { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.5); }
+    /* Pretty background */
+    .bg-blob {
+      position: fixed; inset: -20% -10% auto auto; width: 60vmax; height: 60vmax; filter: blur(70px); opacity:.35; z-index: -1;
+      background: radial-gradient(closest-side, #60a5fa, transparent 70%), radial-gradient(closest-side, #34d399, transparent 70%), radial-gradient(closest-side, #f472b6, transparent 70%);
+      mix-blend-mode: multiply; animation: float 14s ease-in-out infinite alternate;
+    }
+    @keyframes float { from { transform: translateY(-4%) translateX(2%);} to { transform: translateY(6%) translateX(-4%);} }
+    .card { @supports (backdrop-filter: blur(8px)) { backdrop-filter: blur(10px);} }
+    .focus-ring:focus { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.5); }
+    .btn { @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition; }
+    .input { @apply w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2; }
+    .label { @apply text-sm font-semibold text-zinc-700 dark:text-zinc-300; }
   </style>
 </head>
-<body class="bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900 min-h-screen text-zinc-900 dark:text-zinc-100">
-  <header class="max-w-6xl mx-auto px-4 pt-8 pb-4 flex items-center justify-between">
-    <a href="#top" class="flex items-center gap-3" aria-label="Home">
-      <div class="w-10 h-10 rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 grid place-items-center font-black">T</div>
-      <div>
-        <h1 class="text-2xl font-bold">ToolKit – gratis</h1>
-        <p class="text-sm text-zinc-600 dark:text-zinc-400">Calcolatori e convertitori veloci</p>
+<body class="bg-gradient-to-b from-white to-zinc-50 dark:from-zinc-950 dark:to-zinc-900 min-h-screen text-zinc-900 dark:text-zinc-100">
+  <div class="bg-blob"></div>
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/70 dark:bg-zinc-950/60 border-b border-zinc-200/60 dark:border-zinc-800 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#top" class="flex items-center gap-3" aria-label="Home">
+        <div class="w-10 h-10 rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 grid place-items-center font-black">T</div>
+        <div>
+          <p class="text-base leading-tight font-bold">ToolKit – gratis</p>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400">Calcolatori e convertitori curati</p>
+        </div>
+      </a>
+      <div class="flex items-center gap-2">
+        <input id="toolSearch" class="hidden sm:block input !h-9 !py-1.5 !text-sm w-56" placeholder="Cerca uno strumento…" />
+        <button id="shareBtn" class="btn !h-9 !py-1.5 text-sm" aria-label="Condividi">Condividi</button>
+        <button id="themeToggle" class="btn !h-9 !py-1.5 text-xl" aria-label="Cambia tema">🌗</button>
       </div>
-    </a>
-    <div class="flex items-center gap-2">
-      <button id="shareBtn" class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" aria-label="Condividi">Condividi</button>
-      <button id="themeToggle" class="inline-flex items-center justify-center rounded-xl px-3 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" aria-label="Cambia tema">🌗</button>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pb-24" id="top">
-    <!-- Ad Slot Top -->
-    <div class="flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 h-28 mb-6" id="adTop" aria-label="Spazio pubblicità">Spazio pubblicità (AdSense)</div>
+  <!-- Hero -->
+  <section class="max-w-7xl mx-auto px-4 pt-8 pb-4" id="top">
+    <div class="rounded-3xl bg-white/70 dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800 card p-6 md:p-8 grid md:grid-cols-5 gap-6 items-center">
+      <div class="md:col-span-3">
+        <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">Calcolatori eleganti, <span class="text-blue-600 dark:text-blue-400">subito</span>.</h1>
+        <p class="mt-2 text-zinc-600 dark:text-zinc-400">Interfaccia curata, risultati istantanei, copia rapida. Tutto gratuito e senza registrazione.</p>
+        <div class="mt-4 flex items-center gap-3 text-xs text-zinc-500">
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">⚡️ Istantaneo</span>
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">🌓 Tema scuro</span>
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">📱 Responsive</span>
+        </div>
+      </div>
+      <div class="md:col-span-2">
+        <div class="flex items-center justify-center rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/80 dark:bg-zinc-950/30 h-40 text-zinc-500 dark:text-zinc-400 text-sm" id="adTop" aria-label="Spazio pubblicità">Spazio pubblicità (AdSense)</div>
+      </div>
+    </div>
+  </section>
 
+  <!-- Tabs -->
+  <section class="max-w-7xl mx-auto px-4">
+    <div class="flex flex-wrap gap-2 text-sm mb-5">
+      <button class="btn focus-ring" data-tab="all">Tutti</button>
+      <button class="btn focus-ring" data-tab="fin">Finanza</button>
+      <button class="btn focus-ring" data-tab="perc">Percentuali</button>
+      <button class="btn focus-ring" data-tab="conv">Convertitori</button>
+      <button class="btn focus-ring" data-tab="time">Tempo</button>
+      <button class="btn focus-ring" data-tab="health">Salute</button>
+    </div>
+  </section>
+
+  <!-- Tools grid -->
+  <main class="max-w-7xl mx-auto px-4 pb-24" id="grid">
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
       <!-- Interessi composti -->
-      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="compounding">
-        <h2 class="text-lg font-bold mb-3">Interessi composti</h2>
+      <article class="card rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/70 p-5 group" data-tags="fin all">
+        <header class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold flex items-center gap-2">📈 Interessi composti</h2>
+          <div class="flex items-center gap-2">
+            <button class="btn !px-3 !py-1 text-xs" data-copy="#ic_out">Copia</button>
+          </div>
+        </header>
         <div class="space-y-3">
           <div>
-            <label for="ic_principal" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Capitale iniziale (€)</label>
-            <input id="ic_principal" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="1000" min="0" step="0.01" />
+            <label class="label" for="ic_principal">Capitale iniziale (€)</label>
+            <input id="ic_principal" class="input" type="number" inputmode="decimal" value="1000" min="0" step="0.01">
           </div>
           <div>
-            <label for="ic_monthly" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Contributo mensile (€)</label>
-            <input id="ic_monthly" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="50" min="0" step="0.01" />
+            <label class="label" for="ic_monthly">Contributo mensile (€)</label>
+            <input id="ic_monthly" class="input" type="number" inputmode="decimal" value="50" min="0" step="0.01">
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label for="ic_rate" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Tasso annuo (%)</label>
-              <input id="ic_rate" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="6" step="0.01" />
+              <label class="label" for="ic_rate">Tasso annuo (%)</label>
+              <input id="ic_rate" class="input" type="number" inputmode="decimal" value="6" step="0.01">
             </div>
             <div>
-              <label for="ic_years" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Anni</label>
-              <input id="ic_years" type="number" inputmode="numeric" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="5" min="1" />
+              <label class="label" for="ic_years">Anni</label>
+              <input id="ic_years" class="input" type="range" min="1" max="40" value="5" oninput="document.getElementById('ic_years_lbl').textContent=this.value">
+              <div class="text-xs mt-1 text-zinc-500">Durata: <span id="ic_years_lbl">5</span> anni</div>
             </div>
           </div>
-          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="compound">Calcola</button>
-          <div class="mt-3 text-sm" id="ic_out" aria-live="polite"></div>
+          <div class="flex gap-2">
+            <button class="btn w-full" data-action="compound">Calcola</button>
+            <button class="btn w-28" data-reset="compound">Reset</button>
+          </div>
+          <div id="ic_out" class="mt-2 text-sm space-y-1" aria-live="polite"></div>
         </div>
-      </div>
+      </article>
 
       <!-- Prestito / rata mensile -->
-      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="loan">
-        <h2 class="text-lg font-bold mb-3">Prestito – rata mensile</h2>
+      <article class="card rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/70 p-5" data-tags="fin all">
+        <header class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold">💳 Prestito – rata mensile</h2>
+          <button class="btn !px-3 !py-1 text-xs" data-copy="#l_out">Copia</button>
+        </header>
         <div class="space-y-3">
           <div>
-            <label for="l_amount" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Importo (€)</label>
-            <input id="l_amount" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="10000" min="0" step="0.01" />
+            <label class="label" for="l_amount">Importo (€)</label>
+            <input id="l_amount" class="input" type="number" inputmode="decimal" value="10000" min="0" step="0.01">
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label for="l_rate" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Tasso annuo (%)</label>
-              <input id="l_rate" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="7" step="0.01" />
+              <label class="label" for="l_rate">Tasso annuo (%)</label>
+              <input id="l_rate" class="input" type="number" inputmode="decimal" value="7" step="0.01">
             </div>
             <div>
-              <label for="l_years" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Durata (anni)</label>
-              <input id="l_years" type="number" inputmode="numeric" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="3" min="1" />
+              <label class="label" for="l_years">Durata (anni)</label>
+              <input id="l_years" class="input" type="range" min="1" max="30" value="3" oninput="document.getElementById('l_years_lbl').textContent=this.value">
+              <div class="text-xs mt-1 text-zinc-500">Durata: <span id="l_years_lbl">3</span> anni</div>
             </div>
           </div>
-          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="loan">Calcola</button>
-          <div class="mt-3 text-sm" id="l_out" aria-live="polite"></div>
+          <div class="flex gap-2">
+            <button class="btn w-full" data-action="loan">Calcola</button>
+            <button class="btn w-28" data-reset="loan">Reset</button>
+          </div>
+          <div id="l_out" class="mt-2 text-sm space-y-1" aria-live="polite"></div>
+          <details class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <summary class="cursor-pointer">Nota: piano di ammortamento non incluso per brevità</summary>
+            <p>Se vuoi, posso aggiungere il prospetto dettagliato mese per mese.</p>
+          </details>
         </div>
-      </div>
+      </article>
 
-      <!-- Percentuali -->
-      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="percent">
-        <h2 class="text-lg font-bold mb-3">Percentuali veloci</h2>
+      <!-- Percentuali veloci -->
+      <article class="card rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/70 p-5" data-tags="perc all">
+        <header class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold">➗ Percentuali veloci</h2>
+          <button class="btn !px-3 !py-1 text-xs" data-copy="#p_results">Copia</button>
+        </header>
         <div class="space-y-4">
           <div class="grid grid-cols-2 gap-3 items-end">
             <div>
-              <label for="p_x" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">X%</label>
-              <input id="p_x" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="15" step="0.01" />
+              <label class="label" for="p_x">X%</label>
+              <input id="p_x" class="input" type="number" inputmode="decimal" value="15" step="0.01">
             </div>
             <div>
-              <label for="p_y" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">di Y</label>
-              <input id="p_y" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="200" step="0.01" />
+              <label class="label" for="p_y">di Y</label>
+              <input id="p_y" class="input" type="number" inputmode="decimal" value="200" step="0.01">
             </div>
           </div>
-          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="percent-of">Calcola X% di Y</button>
-          <div id="p_of_out" class="text-sm" aria-live="polite"></div>
+          <button class="btn w-full" data-action="percent-of">Calcola X% di Y</button>
           <hr class="border-zinc-200 dark:border-zinc-800" />
           <div class="grid grid-cols-3 gap-3 items-end">
             <div>
-              <label for="p_a" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Valore</label>
-              <input id="p_a" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="120" step="0.01" />
+              <label class="label" for="p_a">Valore</label>
+              <input id="p_a" class="input" type="number" inputmode="decimal" value="120" step="0.01">
             </div>
             <div>
-              <label for="p_b" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">± %</label>
-              <input id="p_b" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="20" step="0.01" />
+              <label class="label" for="p_b">± %</label>
+              <input id="p_b" class="input" type="number" inputmode="decimal" value="20" step="0.01">
             </div>
-            <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" data-action="percent-apply">Applica</button>
+            <button class="btn" data-action="percent-apply">Applica</button>
           </div>
-          <div id="p_inc_out" class="text-sm" aria-live="polite"></div>
           <hr class="border-zinc-200 dark:border-zinc-800" />
           <div class="grid grid-cols-2 gap-3 items-end">
             <div>
-              <label for="p_from" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Da</label>
-              <input id="p_from" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="100" step="0.01" />
+              <label class="label" for="p_from">Da</label>
+              <input id="p_from" class="input" type="number" inputmode="decimal" value="100" step="0.01">
             </div>
             <div>
-              <label for="p_to" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">a</label>
-              <input id="p_to" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="125" step="0.01" />
+              <label class="label" for="p_to">a</label>
+              <input id="p_to" class="input" type="number" inputmode="decimal" value="125" step="0.01">
             </div>
           </div>
-          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="percent-diff">Differenza %</button>
-          <div id="p_diff_out" class="text-sm" aria-live="polite"></div>
+          <button class="btn w-full" data-action="percent-diff">Differenza %</button>
+          <div id="p_results" class="text-sm space-y-1" aria-live="polite"></div>
         </div>
-      </div>
+      </article>
 
       <!-- Convertitore unità -->
-      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="converter">
-        <h2 class="text-lg font-bold mb-3">Convertitore unità</h2>
+      <article class="card rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/70 p-5" data-tags="conv all">
+        <header class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold">🧰 Convertitore unità</h2>
+          <button class="btn !px-3 !py-1 text-xs" data-copy="#u_out">Copia</button>
+        </header>
         <div class="space-y-3">
           <div class="grid grid-cols-3 gap-3">
             <div>
-              <label for="u_cat" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Categoria</label>
-              <select id="u_cat" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2">
+              <label class="label" for="u_cat">Categoria</label>
+              <select id="u_cat" class="input">
                 <option value="length">Lunghezza</option>
                 <option value="mass">Peso</option>
                 <option value="temp">Temperatura</option>
                 <option value="volume">Volume</option>
+                <option value="speed">Velocità</option>
               </select>
             </div>
             <div>
-              <label for="u_from" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Da</label>
-              <select id="u_from" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2"></select>
+              <label class="label" for="u_from">Da</label>
+              <select id="u_from" class="input"></select>
             </div>
             <div>
-              <label for="u_to" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">A</label>
-              <select id="u_to" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2"></select>
+              <label class="label" for="u_to">A</label>
+              <select id="u_to" class="input"></select>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-3 items-end">
             <div>
-              <label for="u_val" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Valore</label>
-              <input id="u_val" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="1" step="0.0001" />
+              <label class="label" for="u_val">Valore</label>
+              <input id="u_val" class="input" type="number" inputmode="decimal" value="1" step="0.0001">
             </div>
-            <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" data-action="convert">Converti</button>
+            <button class="btn" data-action="convert">Converti</button>
           </div>
           <div id="u_out" class="text-sm" aria-live="polite"></div>
         </div>
-      </div>
+      </article>
 
       <!-- Giorni tra date -->
-      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="days">
-        <h2 class="text-lg font-bold mb-3">Giorni tra due date</h2>
+      <article class="card rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/70 p-5" data-tags="time all">
+        <header class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold">📅 Giorni tra due date</h2>
+          <button class="btn !px-3 !py-1 text-xs" data-copy="#d_out">Copia</button>
+        </header>
         <div class="space-y-3">
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label for="d1" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Data 1</label>
-              <input id="d1" type="date" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" />
+              <label class="label" for="d1">Data 1</label>
+              <input id="d1" class="input" type="date">
             </div>
             <div>
-              <label for="d2" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Data 2</label>
-              <input id="d2" type="date" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" />
+              <label class="label" for="d2">Data 2</label>
+              <input id="d2" class="input" type="date">
             </div>
           </div>
-          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="days">Calcola</button>
+          <button class="btn w-full" data-action="days">Calcola</button>
           <div id="d_out" class="text-sm" aria-live="polite"></div>
         </div>
-      </div>
+      </article>
 
-      <!-- Countdown semplice -->
-      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="countdown">
-        <h2 class="text-lg font-bold mb-3">Countdown</h2>
+      <!-- Countdown -->
+      <article class="card rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/70 p-5" data-tags="time all">
+        <header class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold">⏳ Countdown</h2>
+        </header>
         <div class="space-y-3">
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-3 gap-3 items-end">
             <div class="col-span-2">
-              <label for="cd_target" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Data/ora obiettivo</label>
-              <input id="cd_target" type="datetime-local" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" />
+              <label class="label" for="cd_target">Data/ora obiettivo</label>
+              <input id="cd_target" class="input" type="datetime-local">
             </div>
-            <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition" data-action="countdown">Avvia</button>
+            <button class="btn" data-action="countdown">Avvia</button>
           </div>
-          <div id="cd_out" class="text-2xl font-bold mt-2 tracking-wider" aria-live="polite">—</div>
+          <div id="cd_out" class="text-2xl font-bold mt-1 tracking-wider" aria-live="polite">—</div>
         </div>
-      </div>
+      </article>
 
-      <!-- IVA (Italia) -->
-      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="iva">
-        <h2 class="text-lg font-bold mb-3">Calcolatore IVA (IT)</h2>
+      <!-- IVA -->
+      <article class="card rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/70 p-5" data-tags="fin all">
+        <header class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold">💶 Calcolatore IVA (IT)</h2>
+          <button class="btn !px-3 !py-1 text-xs" data-copy="#iva_out">Copia</button>
+        </header>
         <div class="space-y-3">
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label for="iva_base" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Imponibile (€)</label>
-              <input id="iva_base" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="100" step="0.01" />
+              <label class="label" for="iva_base">Imponibile (€)</label>
+              <input id="iva_base" class="input" type="number" inputmode="decimal" value="100" step="0.01">
             </div>
             <div>
-              <label for="iva_rate" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Aliquota (%)</label>
-              <input id="iva_rate" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="22" step="0.01" />
+              <label class="label" for="iva_rate">Aliquota (%)</label>
+              <input id="iva_rate" class="input" type="number" inputmode="decimal" value="22" step="0.01">
             </div>
           </div>
-          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="iva">Calcola</button>
+          <button class="btn w-full" data-action="iva">Calcola</button>
           <div id="iva_out" class="text-sm" aria-live="polite"></div>
         </div>
-      </div>
+      </article>
 
       <!-- BMI -->
-      <div class="rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-5" id="bmi">
-        <h2 class="text-lg font-bold mb-3">BMI – Indice di massa corporea</h2>
+      <article class="card rounded-2xl shadow-md border border-zinc-200/60 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/70 p-5" data-tags="health all">
+        <header class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold">🧍 BMI – Indice di massa corporea</h2>
+          <button class="btn !px-3 !py-1 text-xs" data-copy="#bmi_out">Copia</button>
+        </header>
         <div class="space-y-3">
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label for="bmi_h" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Altezza (cm)</label>
-              <input id="bmi_h" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="175" step="0.1" />
+              <label class="label" for="bmi_h">Altezza (cm)</label>
+              <input id="bmi_h" class="input" type="number" inputmode="decimal" value="175" step="0.1">
             </div>
             <div>
-              <label for="bmi_w" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Peso (kg)</label>
-              <input id="bmi_w" type="number" inputmode="decimal" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2" value="70" step="0.1" />
+              <label class="label" for="bmi_w">Peso (kg)</label>
+              <input id="bmi_w" class="input" type="number" inputmode="decimal" value="70" step="0.1">
             </div>
           </div>
-          <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold border border-zinc-300 dark:border-zinc-700 shadow-sm hover:shadow transition w-full" data-action="bmi">Calcola</button>
+          <button class="btn w-full" data-action="bmi">Calcola</button>
           <div id="bmi_out" class="text-sm" aria-live="polite"></div>
         </div>
-      </div>
+      </article>
+
     </section>
 
-    <!-- Ad Slot Bottom -->
-    <div class="flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 h-28 mt-8" id="adBottom" aria-label="Spazio pubblicità">Spazio pubblicità (AdSense)</div>
+    <!-- Ad bottom -->
+    <div class="mt-8 flex items-center justify-center rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/80 dark:bg-zinc-950/30 h-28 text-zinc-500 dark:text-zinc-400 text-sm" id="adBottom" aria-label="Spazio pubblicità">Spazio pubblicità (AdSense)</div>
 
     <footer class="text-center text-sm text-zinc-500 dark:text-zinc-400 mt-8">
-      <p>© <span id="year"></span> ToolKit – fatto con ♥️. · <a href="#privacy" class="underline">Privacy</a></p>
+      <p>© <span id="year"></span> ToolKit · <button class="underline" id="openPrivacy">Privacy</button></p>
     </footer>
   </main>
+
+  <!-- Privacy Modal -->
+  <dialog id="privacy" class="rounded-2xl p-0 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 w-[90vw] max-w-xl">
+    <div class="p-5">
+      <h3 class="text-lg font-bold mb-1">Privacy</h3>
+      <p class="text-sm text-zinc-600 dark:text-zinc-400">Questo sito non traccia utenti. I valori inseriti possono essere salvati localmente nel tuo browser (localStorage) solo per tua comodità. Puoi cancellarli in qualunque momento.</p>
+      <div class="mt-3 flex justify-end gap-2">
+        <button class="btn" id="clearData">Cancella dati locali</button>
+        <button class="btn" id="closePrivacy">Chiudi</button>
+      </div>
+    </div>
+  </dialog>
+
+  <button id="toTop" class="fixed bottom-5 right-5 btn !rounded-full !w-12 !h-12 hidden" aria-label="Torna su">↑</button>
 
   <noscript>
     <div class="max-w-3xl mx-auto p-4 text-red-600">Questo sito richiede JavaScript per funzionare correttamente.</div>
   </noscript>
 
-  <script defer>
+  <script>
     // ---------- Utils ----------
     const fmtEUR = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' });
     const qs = (s, el=document) => el.querySelector(s);
     const qsa = (s, el=document) => [...el.querySelectorAll(s)];
     const save = (k,v)=>localStorage.setItem(k, JSON.stringify(v));
     const load = (k,d=null)=>{ try { const v = localStorage.getItem(k); return v? JSON.parse(v): d; } catch { return d; } };
+    const deb = (fn,ms=200)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); } };
 
     // Theme toggle + persist
-    const themeToggle = document.getElementById('themeToggle');
+    const themeToggle = qs('#themeToggle');
     themeToggle.addEventListener('click', () => {
       document.documentElement.classList.toggle('dark');
       localStorage.setItem('prefers-dark', document.documentElement.classList.contains('dark') ? '1' : '0');
@@ -276,25 +372,75 @@
     }
 
     // Share button
-    document.getElementById('shareBtn').addEventListener('click', async () => {
+    qs('#shareBtn').addEventListener('click', async () => {
       const url = location.href;
-      const data = { title: 'ToolKit – Calcolatori & Convertitori', text: 'Strumenti gratuiti e veloci', url };
-      try { if (navigator.share) { await navigator.share(data); } else { await navigator.clipboard.writeText(url); alert('Link copiato!'); } } catch {}
+      const data = { title: 'ToolKit – Calcolatori & Convertitori', text: 'Strumenti gratuiti e curati', url };
+      try { if (navigator.share) { await navigator.share(data); } else { await navigator.clipboard.writeText(url); toast('Link copiato'); } } catch {}
     });
 
     // Footer year
-    document.getElementById('year').textContent = new Date().getFullYear();
+    qs('#year').textContent = new Date().getFullYear();
+
+    // Back to top button
+    const toTop = qs('#toTop');
+    window.addEventListener('scroll', () => { toTop.classList.toggle('hidden', window.scrollY < 400); });
+    toTop.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+
+    // Privacy modal
+    const dlg = qs('#privacy');
+    qs('#openPrivacy').addEventListener('click', ()=> dlg.showModal());
+    qs('#closePrivacy').addEventListener('click', ()=> dlg.close());
+    qs('#clearData').addEventListener('click', ()=>{ localStorage.clear(); toast('Dati locali cancellati'); });
+
+    // Tool search filter
+    const search = qs('#toolSearch');
+    if (search) search.addEventListener('input', deb(()=>{
+      const term = search.value.toLowerCase();
+      qsa('article.card').forEach(card=>{
+        const txt = card.textContent.toLowerCase();
+        card.classList.toggle('hidden', !txt.includes(term));
+      });
+    },150));
+
+    // Tabs
+    qsa('[data-tab]').forEach(btn=>btn.addEventListener('click', ()=>{
+      const tab = btn.getAttribute('data-tab');
+      qsa('article.card').forEach(card=>{
+        const tags = card.getAttribute('data-tags');
+        card.classList.toggle('hidden', tab!=='all' && !tags.includes(tab));
+      });
+    }));
 
     // Prefill dates
     const todayISO = new Date().toISOString().split('T')[0];
     qs('#d1').value = todayISO; qs('#d2').value = todayISO;
     qs('#cd_target').value = new Date(Date.now() + 3600*1000).toISOString().slice(0,16);
 
-    // ---------- Interessi composti ----------
+    // ---------- Copy utility ----------
+    function copyFrom(selector){
+      const el = qs(selector);
+      const txt = el?.innerText || el?.textContent || '';
+      if (!txt.trim()) return toast('Niente da copiare');
+      navigator.clipboard.writeText(txt).then(()=> toast('Copiato negli appunti'));
+    }
+    qsa('[data-copy]').forEach(b=> b.addEventListener('click', ()=> copyFrom(b.getAttribute('data-copy'))));
+
+    // ---------- Toast ----------
+    function toast(msg){
+      const t = document.createElement('div');
+      t.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 px-4 py-2 rounded-xl shadow';
+      t.textContent = msg; document.body.appendChild(t);
+      setTimeout(()=>{ t.remove(); }, 1600);
+    }
+
+    // ---------- Calculators ----------
+    function val(id){ return parseFloat(qs(id).value.replace(',','.')) || 0; }
+
+    // Interessi composti
     function calcCompound(){
-      const P = parseFloat(qs('#ic_principal').value) || 0;
-      const contrib = parseFloat(qs('#ic_monthly').value) || 0;
-      const r = (parseFloat(qs('#ic_rate').value) || 0) / 100 / 12; // mensile
+      const P = val('#ic_principal');
+      const contrib = val('#ic_monthly');
+      const r = (val('#ic_rate')/100) / 12; // mensile
       const years = parseInt(qs('#ic_years').value) || 0;
       const n = years * 12;
       const futureP = P * Math.pow(1 + r, n);
@@ -304,20 +450,19 @@
       const interessi = totale - investito;
       qs('#ic_out').innerHTML = `
         <div><strong>Valore finale:</strong> ${fmtEUR.format(totale)}</div>
-        <div>Di cui interessi: <strong>${fmtEUR.format(interessi)}</strong></div>
+        <div>Interessi maturati: <strong>${fmtEUR.format(interessi)}</strong></div>
         <div>Capitale investito: ${fmtEUR.format(investito)}</div>
       `;
     }
 
-    // ---------- Prestito / rata mensile ----------
+    // Prestito
     function calcLoan(){
-      const A = parseFloat(qs('#l_amount').value) || 0;
-      const annual = (parseFloat(qs('#l_rate').value) || 0) / 100;
+      const A = val('#l_amount');
+      const annual = val('#l_rate') / 100;
       const years = parseInt(qs('#l_years').value) || 0;
       const i = annual / 12; const n = years * 12;
-      let rata = 0;
-      if (n === 0) { qs('#l_out').textContent = 'Durata non valida'; return; }
-      rata = (i === 0) ? (A / n) : A * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+      if (n <= 0) { qs('#l_out').textContent = 'Durata non valida'; return; }
+      const rata = (i === 0) ? (A / n) : A * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
       const totale = rata * n; const interessi = totale - A;
       qs('#l_out').innerHTML = `
         <div><strong>Rata mensile:</strong> ${fmtEUR.format(rata)}</div>
@@ -326,118 +471,82 @@
       `;
     }
 
-    // ---------- Percentuali ----------
-    function calcPercentOf(){
-      const x = parseFloat(qs('#p_x').value) || 0; const y = parseFloat(qs('#p_y').value) || 0;
-      const out = (x/100) * y; qs('#p_of_out').textContent = `${x}% di ${y} = ${out.toFixed(2)}`;
-    }
-    function calcIncrease(){
-      const a = parseFloat(qs('#p_a').value) || 0; const b = parseFloat(qs('#p_b').value) || 0;
-      const up = a * (1 + b/100); const down = a * (1 - b/100);
-      qs('#p_inc_out').textContent = `+${b}% = ${up.toFixed(2)}  |  -${b}% = ${down.toFixed(2)}`;
-    }
-    function calcDiff(){
-      const from = parseFloat(qs('#p_from').value) || 0; const to = parseFloat(qs('#p_to').value) || 0;
-      if (from === 0) { qs('#p_diff_out').textContent = 'Non definito (divisione per 0)'; return; }
-      const diff = ((to - from) / from) * 100; qs('#p_diff_out').textContent = `Variazione: ${diff.toFixed(2)}%`;
-    }
+    // Percentuali
+    function calcPercentOf(){ const x=val('#p_x'), y=val('#p_y'); qs('#p_results').innerHTML = `<div>${x}% di ${y} = <strong>${(x/100*y).toFixed(2)}</strong></div>`; }
+    function calcIncrease(){ const a=val('#p_a'), b=val('#p_b'); qs('#p_results').innerHTML += `<div>+${b}% = <strong>${(a*(1+b/100)).toFixed(2)}</strong> · -${b}% = <strong>${(a*(1-b/100)).toFixed(2)}</strong></div>`; }
+    function calcDiff(){ const f=val('#p_from'), t=val('#p_to'); if(!f){ qs('#p_results').innerHTML += '<div>Non definito (divisione per 0)</div>'; return;} qs('#p_results').innerHTML += `<div>Variazione: <strong>${(((t-f)/f)*100).toFixed(2)}%</strong></div>`; }
 
-    // ---------- Convertitore unità ----------
+    // Convertitore unità
     const units = {
       length: { base: 'm', map: { m:1, km:1000, cm:0.01, mm:0.001, mi:1609.344, yd:0.9144, ft:0.3048, in:0.0254 } },
       mass:   { base: 'kg', map: { kg:1, g:0.001, mg:0.000001, lb:0.45359237, oz:0.028349523125 } },
       temp:   { base: 'C', map: { C:1, F:1, K:1 } },
-      volume: { base: 'l', map: { l:1, ml:0.001, m3:1000, gal:3.785411784, pt:0.473176473 } }
+      volume: { base: 'l', map: { l:1, ml:0.001, m3:1000, gal:3.785411784, pt:0.473176473 } },
+      speed:  { base: 'm/s', map: { 'm/s':1, 'km/h':0.2777777778, 'mph':0.44704, 'kn':0.514444 } }
     };
+
     function populateUnits(){
       const cat = qs('#u_cat').value; const from = qs('#u_from'); const to = qs('#u_to');
       from.innerHTML = ''; to.innerHTML = '';
       if (cat === 'temp') { ['C','F','K'].forEach(u => { from.add(new Option(u,u)); to.add(new Option(u,u)); }); }
       else { Object.keys(units[cat].map).forEach(u => { from.add(new Option(u,u)); to.add(new Option(u,u)); }); }
-      // valori di default sensati
       if (cat === 'length') { from.value='m'; to.value='km'; }
       if (cat === 'mass')   { from.value='kg'; to.value='g'; }
       if (cat === 'volume') { from.value='l'; to.value='ml'; }
+      if (cat === 'speed')  { from.value='km/h'; to.value='m/s'; }
     }
+
     function convert(){
-      const cat = qs('#u_cat').value; const from = qs('#u_from').value; const to = qs('#u_to').value; const val = parseFloat(qs('#u_val').value) || 0;
+      const cat = qs('#u_cat').value; const from = qs('#u_from').value; const to = qs('#u_to').value; const valv = val('#u_val');
       let result = 0;
       if (cat === 'temp') {
-        let c; if (from === 'C') c = val; else if (from === 'F') c = (val - 32) * 5/9; else c = val - 273.15;
+        let c; if (from === 'C') c = valv; else if (from === 'F') c = (valv - 32) * 5/9; else c = valv - 273.15;
         if (to === 'C') result = c; else if (to === 'F') result = c * 9/5 + 32; else result = c + 273.15;
-      } else if (cat === 'volume') {
-        const baseVal = val * units[cat].map[from]; result = baseVal / units[cat].map[to];
       } else {
-        const baseVal = val * units[cat].map[from]; result = baseVal / units[cat].map[to];
+        const baseVal = valv * units[cat].map[from]; result = baseVal / units[cat].map[to];
       }
-      qs('#u_out').textContent = `${val} ${from} = ${Number(result).toFixed(6)} ${to}`;
+      qs('#u_out').textContent = `${valv} ${from} = ${Number(result).toFixed(6)} ${to}`;
     }
     qs('#u_cat').addEventListener('change', populateUnits); populateUnits();
 
-    // ---------- Giorni tra date ----------
-    function diffDays(){
-      const d1 = new Date(qs('#d1').value); const d2 = new Date(qs('#d2').value);
-      if (isNaN(d1) || isNaN(d2)) { qs('#d_out').textContent = 'Seleziona entrambe le date'; return; }
-      const ms = Math.abs(d2 - d1); const days = Math.round(ms / (1000*60*60*24));
-      qs('#d_out').textContent = `${days} giorni`;
-    }
+    // Giorni tra date
+    function diffDays(){ const d1=new Date(qs('#d1').value), d2=new Date(qs('#d2').value); if(isNaN(d1)||isNaN(d2)){ qs('#d_out').textContent='Seleziona entrambe le date'; return;} const days=Math.round(Math.abs(d2-d1)/(1000*60*60*24)); qs('#d_out').textContent = `${days} giorni`; }
 
-    // ---------- Countdown ----------
-    let cdTimer = null; function startCountdown(){
-      const targetStr = qs('#cd_target').value; const target = new Date(targetStr);
-      if (isNaN(target)) { alert('Inserisci una data/ora valida'); return; }
-      if (cdTimer) clearInterval(cdTimer);
-      cdTimer = setInterval(() => {
-        const now = new Date(); let diff = target - now;
-        if (diff <= 0) { clearInterval(cdTimer); qs('#cd_out').textContent = 'Fatto!'; return; }
-        const d = Math.floor(diff / (1000*60*60*24)); diff -= d*1000*60*60*24;
-        const h = Math.floor(diff / (1000*60*60)); diff -= h*1000*60*60;
-        const m = Math.floor(diff / (1000*60)); diff -= m*1000*60;
-        const s = Math.floor(diff / 1000);
-        qs('#cd_out').textContent = `${d}g ${h}h ${m}m ${s}s`;
-      }, 1000);
-    }
+    // Countdown
+    let cdTimer=null; function startCountdown(){ const target=new Date(qs('#cd_target').value); if(isNaN(target)){ toast('Data non valida'); return;} clearInterval(cdTimer); cdTimer=setInterval(()=>{ let diff=target - new Date(); if(diff<=0){ clearInterval(cdTimer); qs('#cd_out').textContent='Fatto!'; return;} const d=Math.floor(diff/86400000); diff-=d*86400000; const h=Math.floor(diff/3600000); diff-=h*3600000; const m=Math.floor(diff/60000); diff-=m*60000; const s=Math.floor(diff/1000); qs('#cd_out').textContent=`${d}g ${h}h ${m}m ${s}s`; },1000); }
 
-    // ---------- IVA ----------
-    function calcIVA(){
-      const base = parseFloat(qs('#iva_base').value) || 0; const rate = (parseFloat(qs('#iva_rate').value) || 0)/100;
-      const tax = base * rate; const total = base + tax;
-      const fromTotalBase = total / (1+rate); const fromTotalTax = total - fromTotalBase;
-      qs('#iva_out').innerHTML = `
-        <div>IVA: <strong>${fmtEUR.format(tax)}</strong></div>
-        <div>Totale (ivato): <strong>${fmtEUR.format(total)}</strong></div>
-        <div class="text-zinc-500">(da totale: imponibile ${fmtEUR.format(fromTotalBase)}, IVA ${fmtEUR.format(fromTotalTax)})</div>
-      `;
-    }
+    // IVA
+    function calcIVA(){ const base=val('#iva_base'); const rate=val('#iva_rate')/100; const tax=base*rate; const total=base+tax; const fromTotalBase= total/(1+rate); const fromTotalTax = total - fromTotalBase; qs('#iva_out').innerHTML = `<div>IVA: <strong>${fmtEUR.format(tax)}</strong></div><div>Totale (ivato): <strong>${fmtEUR.format(total)}</strong></div><div class='text-zinc-500'>(da totale: imponibile ${fmtEUR.format(fromTotalBase)}, IVA ${fmtEUR.format(fromTotalTax)})</div>`; }
 
-    // ---------- BMI ----------
-    function calcBMI(){
-      const h = (parseFloat(qs('#bmi_h').value) || 0) / 100; const w = parseFloat(qs('#bmi_w').value) || 0;
-      if (h <= 0) { qs('#bmi_out').textContent = 'Altezza non valida'; return; }
-      const bmi = w / (h*h);
-      let cat = '—';
-      if (bmi < 18.5) cat = 'Sottopeso'; else if (bmi < 25) cat = 'Normopeso'; else if (bmi < 30) cat = 'Sovrappeso'; else cat = 'Obesità';
-      qs('#bmi_out').textContent = `BMI: ${bmi.toFixed(1)} – ${cat}`;
-    }
+    // BMI
+    function calcBMI(){ const h=(val('#bmi_h')/100); const w=val('#bmi_w'); if(h<=0){ qs('#bmi_out').textContent='Altezza non valida'; return;} const bmi=w/(h*h); let cat='—'; if(bmi<18.5)cat='Sottopeso'; else if(bmi<25)cat='Normopeso'; else if(bmi<30)cat='Sovrappeso'; else cat='Obesità'; qs('#bmi_out').textContent = `BMI: ${bmi.toFixed(1)} – ${cat}`; }
 
-    // Bind buttons (unico listener per performance)
+    // Bind buttons
     document.addEventListener('click', (e)=>{
-      const btn = e.target.closest('[data-action]'); if(!btn) return;
-      const a = btn.getAttribute('data-action');
+      const a = e.target.closest('[data-action]')?.getAttribute?.('data-action');
+      if(!a) return;
       ({'compound':calcCompound,'loan':calcLoan,'percent-of':calcPercentOf,'percent-apply':calcIncrease,'percent-diff':calcDiff,'convert':convert,'days':diffDays,'countdown':startCountdown,'iva':calcIVA,'bmi':calcBMI}[a] || (()=>{}))();
+    });
+
+    // Reset buttons
+    document.addEventListener('click', (e)=>{
+      const tgt = e.target.closest('[data-reset]'); if(!tgt) return;
+      const type = tgt.getAttribute('data-reset');
+      if(type==='compound'){ qs('#ic_principal').value=1000; qs('#ic_monthly').value=50; qs('#ic_rate').value=6; qs('#ic_years').value=5; qs('#ic_years_lbl').textContent='5'; qs('#ic_out').textContent=''; }
+      if(type==='loan'){ qs('#l_amount').value=10000; qs('#l_rate').value=7; qs('#l_years').value=3; qs('#l_years_lbl').textContent='3'; qs('#l_out').textContent=''; }
     });
 
     // Persist last used values
     qsa('input, select').forEach(el=>{
       const key = `tk-${el.id}`; const v = load(key);
       if (v !== null && v !== undefined) el.value = v;
-      el.addEventListener('input', ()=> save(key, el.value));
+      el.addEventListener('input', deb(()=> save(key, el.value), 120));
     });
   </script>
 
   <!-- AdSense (placeholder) -->
   <!--
-  1) Incolla lo script UNA VOLTA nell'head o qui prima della chiusura body:
+  1) Incolla lo script UNA VOLTA nell'head o prima della chiusura body:
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=CA-PUB-XXXXXXXX" crossorigin="anonymous"></script>
 
   2) Sostituisci uno dei box "Spazio pubblicità" con:
